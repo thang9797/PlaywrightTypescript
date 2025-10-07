@@ -1,4 +1,3 @@
-
 # Playwright Udemy Course
 
 This is the repository created as part of Playwright Udemy Course
@@ -6,8 +5,48 @@ This is the repository created as part of Playwright Udemy Course
 Udemy Course Link - https://www.udemy.com/course/master-playwright-docker-cucumber-jenkins/
 
 Please enroll in this course to get the full knowledge about this repository
+
+## 🧱 Framework Enhancements
+
+- **Environment aware configuration** – declare reusable environment metadata in `config/environments.json` and switch between them by setting the `TEST_ENV` environment variable before running Playwright. The selected environment is surfaced in the Playwright HTML report metadata.
+- **Reusable test fixtures** – consume the shared fixtures (environment, test data, storage manager, API client) by importing `test`/`expect` from `tests/fixtures/baseTest`. This keeps tests thin and promotes consistent data access patterns.
+- **Centralised test data loading** – leverage `TestDataManager` (`framework/utils/testDataManager.ts`) to cache and serve JSON/CSV assets during a run, avoiding repetitive file IO and parsing logic in every test.
+- **Storage state utilities** – `StorageManager` (`framework/utils/storageManager.ts`) standardises where storage states are kept, offering helpers to persist, fetch, list or clear the JSON snapshots that Playwright creates after authentication.
+- **API client helpers** – `ApiClient` (`framework/utils/apiClient.ts`) builds on Playwright's `request` fixture to provide typed convenience wrappers for JSON CRUD operations with consistent error handling.
+
+```bash
+# Example: execute login test against the QA configuration
+TEST_ENV=qa npx playwright test tests/UITest/loginTest.spec.ts
+```
+
+### Working with storage state
+
+```ts
+import { test } from '../fixtures/baseTest';
+
+test('reuse authentication', async ({ page, storageManager }) => {
+  await page.goto('/');
+  // ...perform login once
+  const statePath = await storageManager.saveFromPage('orange-admin', page);
+
+  // Later in another test file:
+  test.use({ storageState: statePath });
+});
+```
+
+### Calling backend APIs
+
+```ts
+import { test, expect } from '../fixtures/baseTest';
+
+test('verify backend health', async ({ apiClient }) => {
+  const status = await apiClient.get<{ status: string }>('/api/health');
+  expect(status.status).toBe('ok');
+});
+```
+
 ## 🚀 About Me
-I am an experienced Senior Automation Engineer with over 8+ years of expertise in Web automation, Mobile automation, API automation, and Performance testing. 
+I am an experienced Senior Automation Engineer with over 8+ years of expertise in Web automation, Mobile automation, API automation, and Performance testing.
 
 I possess a strong command of programming languages such as Java, JavaScript, Kotlin, Python, and Scala.
 
