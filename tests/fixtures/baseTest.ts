@@ -1,14 +1,22 @@
 import { test as base } from '@playwright/test';
-import { getEnvironmentConfig, EnvironmentConfig } from '../../framework/config/environment';
+import {
+  getEnvironmentConfig,
+  EnvironmentConfig,
+  EnvironmentDatabaseConfig,
+} from '../../framework/config/environment';
 import { TestDataManager } from '../../framework/utils/testDataManager';
 import { StorageManager } from '../../framework/utils/storageManager';
 import { ApiClient } from '../../framework/utils/apiClient';
+import { ApiKeywords } from '../../framework/utils/apiKeywords';
+import { DatabaseKeywords } from '../../framework/utils/databaseKeywords';
 
 type Fixtures = {
   environment: EnvironmentConfig;
   testDataManager: TestDataManager;
   storageManager: StorageManager;
   apiClient: ApiClient;
+  apiKeywords: ApiKeywords;
+  databaseKeywords: DatabaseKeywords | null;
 };
 
 export const test = base.extend<Fixtures>({
@@ -29,6 +37,25 @@ export const test = base.extend<Fixtures>({
   apiClient: async ({ request, environment }, use) => {
     const client = new ApiClient(request, environment.baseURL);
     await use(client);
+  },
+  apiKeywords: async ({ request, environment }, use) => {
+    const keywords = new ApiKeywords(request, environment.baseURL);
+    await use(keywords);
+  },
+  databaseKeywords: async ({ environment }, use) => {
+    const databaseConfig: EnvironmentDatabaseConfig | undefined = environment.database;
+
+    if (!databaseConfig) {
+      await use(null);
+      return;
+    }
+
+    const keywords = new DatabaseKeywords(databaseConfig);
+    try {
+      await use(keywords);
+    } finally {
+      await keywords.dispose();
+    }
   },
 });
 

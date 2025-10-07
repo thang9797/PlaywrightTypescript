@@ -1,5 +1,11 @@
 import { test, expect } from '../fixtures/baseTest';
 
+test.describe('API keyword utilities', () => {
+  test('captures JSON response details', async ({ apiKeywords }) => {
+    const response = await apiKeywords.sendApiRequest(
+      'GET',
+      'https://reqres.in/api/users?page=2'
+    );
 const reqresBaseUrl = 'https://reqres.in/api';
 
     await apiKeywords.verifyResponseStatusCode(response, 200);
@@ -13,6 +19,22 @@ const reqresBaseUrl = 'https://reqres.in/api';
     expect(body.data[0]?.first_name).toBe('Michael');
   });
 
+  test('converts XML responses into JSON', async ({ apiKeywords }) => {
+    const response = await apiKeywords.sendApiRequest(
+      'GET',
+      'https://www.w3schools.com/xml/note.xml'
+    );
+
+    await apiKeywords.verifyResponseStatusCode(response, 200);
+
+    const xmlJson = await apiKeywords.getResponseBodyXmlToJson(response);
+
+    expect(xmlJson).toMatchObject({
+      note: {
+        to: 'Tove',
+      },
+    });
+  });
 test.describe.serial('Reqres user lifecycle', () => {
     let userId: string;
 

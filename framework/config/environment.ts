@@ -9,6 +9,18 @@ export interface EnvironmentConfig {
   name: string;
   baseURL: string;
   credentials: EnvironmentCredentials;
+  database?: EnvironmentDatabaseConfig;
+}
+
+export interface EnvironmentDatabaseConfig {
+  host?: string;
+  user?: string;
+  password?: string;
+  database?: string;
+  port?: number;
+  uri?: string;
+  connectionLimit?: number;
+  ssl?: boolean | Record<string, unknown>;
 }
 
 type EnvironmentKey = keyof typeof environments;
