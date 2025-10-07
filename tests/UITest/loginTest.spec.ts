@@ -5,7 +5,7 @@ interface OrangeCredentials {
   validPassword: string;
 }
 
-test('Login Test for Orange HRM', async ({ page, environment, testDataManager }, testInfo) => {
+test('Login Test for Orange HRM', async ({ page, environment, testDataManager, storageManager }, testInfo) => {
   const credentials = testDataManager.readJSON<OrangeCredentials>('tests/testData/orangeHRMCredentials.json');
 
   await page.goto('/');
@@ -14,6 +14,9 @@ test('Login Test for Orange HRM', async ({ page, environment, testDataManager },
   await page.locator('button[type="submit"]').click();
 
   await expect(page.locator('.oxd-userdropdown-tab')).toBeVisible();
+
+  // Capture the authenticated session so other tests can re-use it without logging in again.
+  await storageManager.saveFromPage('orange-admin', page);
 
   await page.locator('.oxd-userdropdown-tab').click();
   await page.locator('text=Logout').click();
