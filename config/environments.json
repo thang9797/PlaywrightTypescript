@@ -1,0 +1,18 @@
+{
+  "dev": {
+    "name": "Development",
+    "baseURL": "https://opensource-demo.orangehrmlive.com",
+    "credentials": {
+      "username": "Admin",
+      "password": "admin123"
+    }
+  },
+  "qa": {
+    "name": "Quality Assurance",
+    "baseURL": "https://opensource-demo.orangehrmlive.com",
+    "credentials": {
+      "username": "qa.user",
+      "password": "SuperSecretPassword!"
+    }
+  }
+}

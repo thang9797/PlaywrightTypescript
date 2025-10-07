@@ -9,8 +9,11 @@ test('Frame Handling Using Page.Frame()', async ({ page }) => {
   const allFramesCount = allFrames.length;
   console.log('Total Frames Count is ' + allFramesCount);
   const frame1 = page.frame({ url: 'https://ui.vision/demo/webtest/frames/frame_1.html' });
-  // ✅ Dùng optional chaining để tránh lỗi nếu frame không tìm thấy
-  await frame1?.locator('input[name="mytext1"]').fill('Playwright');
+  if (!frame1) {
+    throw new Error('Frame 1 could not be located');
+  }
+
+  await frame1.locator('input[name="mytext1"]').fill('Playwright');
 
   await page.waitForTimeout(5000);
   await page.close();
@@ -19,25 +22,29 @@ test('Frame Handling Using Page.Frame()', async ({ page }) => {
 test('Frame Handling Using Page.FrameLocator()', async ({ page }) => {
   await page.goto('https://ui.vision/demo/webtest/frames/');
   const frame1 = page.frameLocator('frame[src="frame_1.html"]');
-  await frame1?.locator('input[name="mytext1"]').fill('Playwright');
+  await frame1.locator('input[name="mytext1"]').fill('Playwright');
   await page.waitForTimeout(5000);
   await page.close();
 })
 
 test('Nested Frame Handling', async ({ page }) => {
   await page.goto('https://ui.vision/demo/webtest/frames/');
-  
-  const frame3 = page.frame({url:'https://ui.vision/demo/webtest/frames/frame_3.html'});
 
-  const childFrames = frame3?.childFrames();
-  // optional chaining – tránh lỗi nếu frame3 là null hoặc undefined
-  // .childFrames(): là method của Playwright, trả về mảng các frame con (nếu có)
-  // frame3: là một đối tượng frame (iframe) – ví dụ: lấy từ page.frame(...)
+  const frame3 = page.frame({ url: 'https://ui.vision/demo/webtest/frames/frame_3.html' });
+  if (!frame3) {
+    throw new Error('Frame 3 could not be located');
+  }
+
+  const childFrames = frame3.childFrames();
   console.log(childFrames);
-  console.log("Number of Child Frames "+childFrames?.length);
+  console.log(`Number of Child Frames ${childFrames.length}`);
 
-  await childFrames[0].locator('//*[@id="i9"]/div[3]/div').check({force:true});
-  await childFrames[0].locator('//*[@id="i19"]/div[3]').check({force:true});
+  if (childFrames.length === 0) {
+    throw new Error('Expected nested child frames but none were found');
+  }
+
+  await childFrames[0].locator('//*[@id="i9"]/div[3]/div').check({ force: true });
+  await childFrames[0].locator('//*[@id="i19"]/div[3]').check({ force: true });
 
   await page.waitForTimeout(5000);
   await page.close();
