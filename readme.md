@@ -1,4 +1,3 @@
-
 # Playwright Udemy Course
 
 This is the repository created as part of Playwright Udemy Course
@@ -6,8 +5,20 @@ This is the repository created as part of Playwright Udemy Course
 Udemy Course Link - https://www.udemy.com/course/master-playwright-docker-cucumber-jenkins/
 
 Please enroll in this course to get the full knowledge about this repository
+
+## 🧱 Framework Enhancements
+
+- **Environment aware configuration** – declare reusable environment metadata in `config/environments.json` and switch between them by setting the `TEST_ENV` environment variable before running Playwright. The selected environment is surfaced in the Playwright HTML report metadata.
+- **Reusable test fixtures** – consume `environment` and `testDataManager` fixtures by importing `test`/`expect` from `tests/fixtures/baseTest`. This keeps tests thin and promotes consistent data access patterns.
+- **Centralised test data loading** – leverage `TestDataManager` (`framework/utils/testDataManager.ts`) to cache and serve JSON/CSV assets during a run, avoiding repetitive file IO and parsing logic in every test.
+
+```bash
+# Example: execute login test against the QA configuration
+TEST_ENV=qa npx playwright test tests/UITest/loginTest.spec.ts
+```
+
 ## 🚀 About Me
-I am an experienced Senior Automation Engineer with over 8+ years of expertise in Web automation, Mobile automation, API automation, and Performance testing. 
+I am an experienced Senior Automation Engineer with over 8+ years of expertise in Web automation, Mobile automation, API automation, and Performance testing.
 
 I possess a strong command of programming languages such as Java, JavaScript, Kotlin, Python, and Scala.
 
