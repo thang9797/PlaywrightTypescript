@@ -1,36 +1,17 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures/baseTest';
 
 const reqresBaseUrl = 'https://reqres.in/api';
 
-test('Get All Products List', async ({ request }) => {
-    const response = await request.get('https://automationexercise.com/api/productsList');
-    var responseJson = await response.json();
-    console.log(responseJson);
-    expect(response.status()).toBe(200);
-    // expect(responseJson.data[0].first_name).toBe('Michael');
-});
+    await apiKeywords.verifyResponseStatusCode(response, 200);
+    await apiKeywords.verifyResponseHeaderValue(response, 'content-type', /application\/json/i);
 
-test('POST To All Products List', async ({ request }) => {
-    const response = await request.post('https://automationexercise.com/api/productsList');
-    var responseJson = await response.json();
-    console.log(responseJson);
-    expect(response.status()).toBe(200);
-    expect(responseJson.responseCode).toBe(405);
-});
+    const body = await apiKeywords.getResponseBody<{
+      data: Array<{ first_name: string }>;
+    }>(response);
 
-// use when need to input body
-test('POST To Search Product', async ({ request }) => {
-    const response = await request.post('https://automationexercise.com/api/searchProduct', {
-        form: {
-          search_product: 'jean'
-        }
-      });
-    var responseJson = await response.json();
-    console.log(responseJson);
-    expect(response.status()).toBe(200);
-    expect(responseJson.products.length).toBeGreaterThan(0); // check co ket qua tra ve
-    console.log(responseJson.products[0])
-});
+    expect(body.data.length).toBeGreaterThan(0);
+    expect(body.data[0]?.first_name).toBe('Michael');
+  });
 
 test.describe.serial('Reqres user lifecycle', () => {
     let userId: string;
