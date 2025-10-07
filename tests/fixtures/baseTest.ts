@@ -3,14 +3,12 @@ import { getEnvironmentConfig, EnvironmentConfig } from '../../framework/config/
 import { TestDataManager } from '../../framework/utils/testDataManager';
 import { StorageManager } from '../../framework/utils/storageManager';
 import { ApiClient } from '../../framework/utils/apiClient';
-import { ApiKeywords } from '../../framework/utils/apiKeywords';
 
 type Fixtures = {
   environment: EnvironmentConfig;
   testDataManager: TestDataManager;
   storageManager: StorageManager;
   apiClient: ApiClient;
-  apiKeywords: ApiKeywords;
 };
 
 export const test = base.extend<Fixtures>({
@@ -31,10 +29,6 @@ export const test = base.extend<Fixtures>({
   apiClient: async ({ request, environment }, use) => {
     const client = new ApiClient(request, environment.baseURL);
     await use(client);
-  },
-  apiKeywords: async ({ request, environment }, use) => {
-    const keywords = new ApiKeywords(request, environment.baseURL);
-    await use(keywords);
   },
 });
 

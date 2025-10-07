@@ -13,7 +13,6 @@ Please enroll in this course to get the full knowledge about this repository
 - **Centralised test data loading** – leverage `TestDataManager` (`framework/utils/testDataManager.ts`) to cache and serve JSON/CSV assets during a run, avoiding repetitive file IO and parsing logic in every test.
 - **Storage state utilities** – `StorageManager` (`framework/utils/storageManager.ts`) standardises where storage states are kept, offering helpers to persist, fetch, list or clear the JSON snapshots that Playwright creates after authentication.
 - **API client helpers** – `ApiClient` (`framework/utils/apiClient.ts`) builds on Playwright's `request` fixture to provide typed convenience wrappers for JSON CRUD operations with consistent error handling.
-- **API keyword utilities** – `ApiKeywords` (`framework/utils/apiKeywords.ts`) offer reusable helpers to send requests, capture response bodies (including XML to JSON conversion), and assert headers or status codes with a single call.
 
 ```bash
 # Example: execute login test against the QA configuration
@@ -43,19 +42,6 @@ import { test, expect } from '../fixtures/baseTest';
 test('verify backend health', async ({ apiClient }) => {
   const status = await apiClient.get<{ status: string }>('/api/health');
   expect(status.status).toBe('ok');
-});
-```
-
-### Using API keywords
-
-```ts
-import { test, expect } from '../fixtures/baseTest';
-
-test('inspect JSON response', async ({ apiKeywords }) => {
-  const response = await apiKeywords.sendApiRequest('GET', 'https://reqres.in/api/users?page=2');
-  await apiKeywords.verifyResponseStatusCode(response, 200);
-  const body = await apiKeywords.getResponseBody<{ data: unknown[] }>(response);
-  expect(body.data.length).toBeGreaterThan(0);
 });
 ```
 
