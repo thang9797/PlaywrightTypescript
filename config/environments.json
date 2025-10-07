@@ -1,0 +1,32 @@
+{
+  "dev": {
+    "name": "Development",
+    "baseURL": "https://opensource-demo.orangehrmlive.com",
+    "credentials": {
+      "username": "Admin",
+      "password": "admin123"
+    },
+    "database": {
+      "host": "localhost",
+      "user": "playwright",
+      "password": "password",
+      "database": "playwright",
+      "port": 3306
+    }
+  },
+  "qa": {
+    "name": "Quality Assurance",
+    "baseURL": "https://opensource-demo.orangehrmlive.com",
+    "credentials": {
+      "username": "qa.user",
+      "password": "SuperSecretPassword!"
+    },
+    "database": {
+      "host": "localhost",
+      "user": "qa_user",
+      "password": "QaPassword123!",
+      "database": "playwright_qa",
+      "port": 3306
+    }
+  }
+}

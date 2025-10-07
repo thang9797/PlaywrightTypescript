@@ -1,59 +1,37 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures/baseTest';
 
-// var userId;
+test.describe('API keyword utilities', () => {
+  test('captures JSON response details', async ({ apiKeywords }) => {
+    const response = await apiKeywords.sendApiRequest(
+      'GET',
+      'https://reqres.in/api/users?page=2'
+    );
 
-test('Get All Products List', async ({ request }) => {
-    const response = await request.get('https://automationexercise.com/api/productsList');
-    var responseJson = await response.json();
-    console.log(responseJson);
-    expect(response.status()).toBe(200);
-    // expect(responseJson.data[0].first_name).toBe('Michael');
-});
+    await apiKeywords.verifyResponseStatusCode(response, 200);
+    await apiKeywords.verifyResponseHeaderValue(response, 'content-type', /application\/json/i);
 
-test('POST To All Products List', async ({ request }) => {
-    const response = await request.post('https://automationexercise.com/api/productsList');
-    var responseJson = await response.json();
-    console.log(responseJson);
-    expect(response.status()).toBe(200);
-    expect(responseJson.responseCode).toBe(405);
-});
+    const body = await apiKeywords.getResponseBody<{
+      data: Array<{ first_name: string }>;
+    }>(response);
 
-// use when need to input body
-test('POST To Search Product', async ({ request }) => {
-    const response = await request.post('https://automationexercise.com/api/searchProduct', {
-        form: {
-          search_product: 'jean'
-        }
-      });
-    var responseJson = await response.json();
-    console.log(responseJson);
-    expect(response.status()).toBe(200);
-    expect(responseJson.products.length).toBeGreaterThan(0); // check co ket qua tra ve
-    console.log(responseJson.products[0])
-});
+    expect(body.data.length).toBeGreaterThan(0);
+    expect(body.data[0]?.first_name).toBe('Michael');
+  });
 
-test('Update User using PUT API', async ({ request }) => {
-    var user = {
-        "name": "automation",
-        "job": "course"
-    }
+  test('converts XML responses into JSON', async ({ apiKeywords }) => {
+    const response = await apiKeywords.sendApiRequest(
+      'GET',
+      'https://www.w3schools.com/xml/note.xml'
+    );
 
-    const response = await request.put('https://reqres.in/api/users/' + userId, {
-        data: user,
-        headers: { "ACCEPT": "applications/JSON" }
+    await apiKeywords.verifyResponseStatusCode(response, 200);
+
+    const xmlJson = await apiKeywords.getResponseBodyXmlToJson(response);
+
+    expect(xmlJson).toMatchObject({
+      note: {
+        to: 'Tove',
+      },
     });
-    var responseJson = await response.json();
-    console.log(responseJson);
-    expect(response.status()).toBe(200);
-    expect(responseJson.name).toBe(`${user.name}`);
-    expect(responseJson.job).toBe(`${user.job}`);
-    userId = responseJson.id;
-});
-
-test('Delete User using DELETE API', async ({ request }) => {
-    const response = await request.delete('https://reqres.in/api/users/' + userId);
-    expect(response.status()).toBe(204);
-
-    const response2 = await request.get('https://reqres.in/api/users/' + userId);
-    console.log(await response2.json())
+  });
 });
