@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
-import {DateTime} from 'luxon';
+import { test, expect, type Page } from '@playwright/test';
+import { DateTime } from 'luxon';
 
 test('Using Fill Method', async ({ page }) => {
   await page.goto('https://www.lambdatest.com/selenium-playground/bootstrap-date-picker-demo');
@@ -13,35 +13,36 @@ test('Using Luxon', async ({ page }) => {
   
   // Select Past Date
   await page.locator('input[placeholder="Start date"]').click();
-  selectDate(20,"June 2019",page);
+  await selectDate(20, 'June 2019', page);
   await page.waitForTimeout(5000);
   await page.reload();
 
   // Select Future Date
   await page.locator('input[placeholder="Start date"]').click();
-  selectDate(20,"June 2025",page);
+  await selectDate(20, 'June 2025', page);
   await page.waitForTimeout(5000);
   await page.reload();
 
   // Select Current Month date
   await page.locator('input[placeholder="Start date"]').click();
-  selectDate(30,"September 2023",page);
+  await selectDate(30, 'September 2023', page);
   await page.waitForTimeout(5000);
   await page.reload();
 });
 
-async function selectDate(date:Number,dateToSelect:string,page){
+async function selectDate(date: number, dateToSelect: string, page: Page): Promise<void> {
   const monthYear = page.locator('div[class="datepicker-days"] th[class="datepicker-switch"]');
   const prevButton = page.locator('div[class="datepicker-days"] th[class="prev"]');
   const nextButton = page.locator('div[class="datepicker-days"] th[class="next"]');
 
-  const formattedMonth = DateTime.fromFormat(dateToSelect, "MMMM yyyy");
+  const formattedMonth = DateTime.fromFormat(dateToSelect, 'MMMM yyyy');
+  const targetMillis = formattedMonth.toMillis();
+  const currentMillis = DateTime.now().startOf('month').toMillis();
 
-  while(await monthYear.textContent() != dateToSelect){
-    if(formattedMonth < DateTime.fromJSDate(new Date())){
+  while ((await monthYear.textContent()) !== dateToSelect) {
+    if (targetMillis < currentMillis) {
       await prevButton.click();
-    }
-    else{
+    } else {
       await nextButton.click();
     }
   }

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
 
 test('Handling Webtable', async ({ page }) => {
     await page.goto('https://testautomationpractice.blogspot.com/');
@@ -42,7 +42,7 @@ test('Selecting Multiple Checkbox using function', async ({ page }) => {
     await page.close();
 })
 
-async function selectProduct(rows, page, productName) {
+async function selectProduct(rows: Locator, page: Page, productName: string): Promise<void> {
     const matchedRow = rows.filter({
         has: page.locator('td'),
         hasText: productName
