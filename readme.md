@@ -89,6 +89,18 @@ test('verify user exists in the database', async ({ databaseKeywords }) => {
 
 > ℹ️ See `tests/apiTesting/databaseKeywords.spec.ts` for a full end-to-end example that exercises the Playwright fixture and reports the results inside a real test run.
 
+test('lookup record from database', async ({ databaseKeywords }) => {
+  test.skip(!databaseKeywords, 'Database not configured for this environment');
+
+  const rows = await databaseKeywords.executeQuery<{ username: string }>(
+    'SELECT username FROM users WHERE id = ?',
+    [1234]
+  );
+
+  expect(rows[0]?.username).toBe('orange.admin');
+});
+```
+
 ## 🚀 About Me
 I am an experienced Senior Automation Engineer with over 8+ years of expertise in Web automation, Mobile automation, API automation, and Performance testing.
 

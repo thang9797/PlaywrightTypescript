@@ -6,6 +6,7 @@ test.describe('API keyword utilities', () => {
       'GET',
       'https://reqres.in/api/users?page=2'
     );
+const reqresBaseUrl = 'https://reqres.in/api';
 
     await apiKeywords.verifyResponseStatusCode(response, 200);
     await apiKeywords.verifyResponseHeaderValue(response, 'content-type', /application\/json/i);
