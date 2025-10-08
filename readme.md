@@ -65,6 +65,30 @@ test('inspect JSON response', async ({ apiKeywords }) => {
 ```ts
 import { test, expect } from '../fixtures/baseTest';
 
+test('verify user exists in the database', async ({ databaseKeywords }) => {
+  const db = databaseKeywords;
+  if (!db) {
+    test.skip(true, 'Database not configured for this environment.');
+    return;
+  }
+
+  let rows: Array<{ total: number }> = [];
+  try {
+    rows = await db.executeQuery<{ total: number }>(
+      'SELECT COUNT(*) AS total FROM users WHERE username = ?',
+      ['Admin']
+    );
+  } catch (error) {
+    test.skip(true, `Skipping database assertion. Unable to query database: ${String(error)}`);
+    return;
+  }
+
+  expect(rows[0]?.total ?? 0).toBeGreaterThan(0);
+});
+```
+
+> ℹ️ See `tests/apiTesting/databaseKeywords.spec.ts` for a full end-to-end example that exercises the Playwright fixture and reports the results inside a real test run.
+
 test('lookup record from database', async ({ databaseKeywords }) => {
   test.skip(!databaseKeywords, 'Database not configured for this environment');
 
